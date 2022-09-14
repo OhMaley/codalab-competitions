@@ -181,33 +181,40 @@ class UserSettingsView(LoginRequiredMixin, UpdateView):
         return self.request.user
 
 
-class AdminCompetitionsManager(ModelFormSetView):
-    """Admin page for managing the competitions"""
-    model = Competition
-    template_name = "web/admin_competitions_manager.html"
-    fields = [
-        'id',
-        'title',
-        'creator',
-        'start_date',
-        'end_date',
-        'upper_bound_max_submission_size'
-    ]
-    success_url = '/admin_competitions_manager'
-    factory_kwargs = {'extra': 0}
+@login_required
+def admin_competitions_manager(request):
+    if not request.user.is_staff:
+        return HttpResponse(status=403)
+    return render(request, "web/admin_competitions_manager.html")
 
-    def get(self, *args, **kwargs):
-        redirect_url = "index.html"
-        user = self.request.user
-        if user.is_staff and user.is_active:
-            return super(AdminCompetitionsManager, self).get(*args, **kwargs)
-        else:
-            return HttpResponseRedirect(redirect_url)
 
-    def get_context_data(self, **kwargs):
-        context = super(AdminCompetitionsManager, self).get_context_data(**kwargs)
-        context["object_list"] = list(models.Competition.objects.order_by('-start_date'))
-        return context
+# class AdminCompetitionsManager(ModelFormSetView):
+#     """Admin page for managing the competitions"""
+#     model = Competition
+#     template_name = "web/admin_competitions_manager.html"
+#     fields = [
+#         'id',
+#         'title',
+#         'creator',
+#         'start_date',
+#         'end_date',
+#         'upper_bound_max_submission_size'
+#     ]
+#     success_url = '/admin_competitions_manager'
+#     factory_kwargs = {'extra': 0}
+
+#     def get(self, *args, **kwargs):
+#         redirect_url = "index.html"
+#         user = self.request.user
+#         if user.is_staff and user.is_active:
+#             return super(AdminCompetitionsManager, self).get(*args, **kwargs)
+#         else:
+#             return HttpResponseRedirect(redirect_url)
+
+#     def get_context_data(self, **kwargs):
+#         context = super(AdminCompetitionsManager, self).get_context_data(**kwargs)
+#         context["object_list"] = list(models.Competition.objects.order_by('-start_date'))
+#         return context
 
 
 ############################################################
