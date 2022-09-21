@@ -27,3 +27,19 @@ class GetCompetitions(views.APIView):
             })
 
         return Response(competitions, status=status.HTTP_200_OK)
+
+@permission_classes((permissions.IsAuthenticated,))
+class UpdateCompetitions(views.APIView):
+    """
+    Update competitions in batch
+
+    """
+    def post(self, request, *args, **kwargs):
+        if not self.request.user.is_staff:
+            raise PermissionDenied(detail="Admin only")
+        
+        print('request', request)
+        print('args', args)
+        print('kwargs', kwargs)
+
+        return Response('TODO')

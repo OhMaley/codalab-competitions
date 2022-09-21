@@ -43,4 +43,5 @@ urlpatterns += (
     url(r'^storage/usage-history', storage_views.GetStorageUsageHistory.as_view(), name="storage_usage_history"),
     # Admin
     url(r'^admin/competitions', admin_views.GetCompetitions.as_view(), name="competitions"),
+    url(r'^admin/competitions/update', admin_views.UpdateCompetitions.as_view(), name="update_competitions"),
 )
