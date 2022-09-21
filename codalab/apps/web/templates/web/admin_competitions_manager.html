@@ -72,6 +72,14 @@
                             </v-edit-dialog>
                           </template
                     </v-data-table>
+                    <v-btn
+                        :loading="saving"
+                        :disabled="saving"
+                        color="secondary"
+                        @click="saveAll"
+                    >
+                        Save
+                    </v-btn>
                 </div>
             </v-app>
         </div>
@@ -118,7 +126,8 @@
                         competitionsTableSearch: '',
                         rules: {
                             positiveInteger: value => !value || /^\+?\d+$/.test(value) || "Invalid size"
-                        }
+                        },
+                        saving: false
                     };
                 },
                 mounted: function () {
@@ -149,6 +158,41 @@
                     },
                     cancel() {
                         console.log('cancel');
+                    },
+                    saveAll() {
+                        console.log('saving all');
+                        this.saving = true;
+                        const competitionsToUpdate = {
+                            competitions: [
+                                {
+                                    id: 0,
+                                    upper_bound_max_submission_size: 300000000
+                                },
+                                {
+                                    id: 1,
+                                    upper_bound_max_submission_size: 200000000
+                                }
+                            ]
+                        };
+                        fetch("/api/admin/competitions/update", {
+                            method: 'POST',
+                            body: JSON.stringify(competitionsToUpdate)
+                        })
+                        .then(response => {
+                            if(response.ok) {
+                                return response.json();
+                            }
+                            throw new Error('Something went wrong');
+                        })
+                        .then(json => {
+                            console.log("success", json);
+                        })
+                        .catch(error => {
+                            console.log("error while fetching /api/admin/competitions", error);
+                        })
+                        .finally(() => {
+                            this.saving = false;
+                        });
                     }
                 },
                 filters: {
